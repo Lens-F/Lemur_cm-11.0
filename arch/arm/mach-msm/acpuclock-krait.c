@@ -39,6 +39,18 @@
 #include "acpuclock-krait.h"
 #include "avs.h"
 
+#ifdef CONFIG_CPU_OVERCLOCK
+#define OVERCLOCK_EXTRA_FREQS	7
+#else
+#define OVERCLOCK_EXTRA_FREQS	0
+#endif
+
+#ifdef CONFIG_LOW_CPUCLOCKS
+#define FREQ_TABLE_SIZE		(39 + OVERCLOCK_EXTRA_FREQS)
+#else
+#define FREQ_TABLE_SIZE		(35 + OVERCLOCK_EXTRA_FREQS)
+#endif
+
 #define CPU_FOOT_PRINT_MAGIC				0xACBDFE00
 static void set_acpuclk_foot_print(unsigned cpu, unsigned state)
 {
@@ -889,8 +901,8 @@ static void __init bus_init(const struct l2_level *l2_level)
 
 #ifdef CONFIG_CPU_VOLTAGE_TABLE
 
-#define HFPLL_MIN_VDD		 800000
-#define HFPLL_MAX_VDD		1350000
+#define HFPLL_MIN_VDD		 600000
+#define HFPLL_MAX_VDD		1450000
 
 ssize_t acpuclk_get_vdd_levels_str(char *buf) {
 
@@ -936,7 +948,7 @@ void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
 #endif	/* CONFIG_CPU_VOTALGE_TABLE */
 
 #ifdef CONFIG_CPU_FREQ_MSM
-static struct cpufreq_frequency_table freq_table[NR_CPUS][35];
+static struct cpufreq_frequency_table freq_table[NR_CPUS][FREQ_TABLE_SIZE];
 
 static void __init cpufreq_table_init(void)
 {
